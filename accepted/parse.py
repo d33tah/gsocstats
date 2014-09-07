@@ -22,16 +22,17 @@ def add_to_dict(dict_, key, project_dict):
         dict_[key] += [project_dict]
 
 def parse_row(row, year):
+    # Key,Title,Student,Organization,Mentors
     global by_student, by_project, by_mentor, by_organization, by_year
     project_dict = {}
     project_dict['year'] = year
     project_dict['project_id'] = s(row[0])
-    project_dict['student_name'] = s(row[1])
-    project_dict['project_name'] = s(row[2])
+    project_dict['student_name'] = s(row[2])
+    project_dict['project_name'] = s(row[1])
     project_dict['organization_name'] = s(row[3])
-    status = s(row[4])
-    assert(status == "accepted")
-    project_dict['mentor_name'] = s(row[5])
+    #status = s(row[4])
+    #assert(status == "accepted")
+    project_dict['mentor_name'] = s(row[4])
     add_to_dict(by_student, project_dict['student_name'], project_dict)
     add_to_dict(by_mentor, project_dict['mentor_name'], project_dict)
     add_to_dict(by_project, project_dict['project_name'], project_dict)
