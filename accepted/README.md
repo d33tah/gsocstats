@@ -28,12 +28,6 @@ wget "https://developers.google.com/open-source/soc/2007/" -O 2007.html
 wget "https://developers.google.com/open-source/soc/2008/" -O 2008.html
 
 Now, run "./manage.py syncdb --noinput" to create the SQLite database schema
-and the following, to create admin:admin Django user:
+and "./parse.py" to load all the data. To run the server, call:
 
-echo "from django.contrib.auth.models import User;
-User.objects.create_superuser('admin',
-                              'admin@example.com',
-                              'admin')" | ./manage.py shell
-
-Once it's done, import the data using "./parse.py" command. To run the server,
-call "./manage.py runserver".
+./manage.py runserver
