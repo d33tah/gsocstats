@@ -1,11 +1,13 @@
 #!/usr/bin/python
 
 import csv
+from lxml import html
 
 import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "frontend.settings")
 from frontend.models import Person, Organization, Project
 from django.db import transaction
+from django.utils.encoding import smart_str as s
 
 by_student = {}
 by_project = {}
@@ -23,13 +25,13 @@ def parse_row(row, year):
     global by_student, by_project, by_mentor, by_organization, by_year
     project_dict = {}
     project_dict['year'] = year
-    project_dict['project_id'] = row[0]
-    project_dict['student_name'] = row[1]
-    project_dict['project_name'] = row[2]
-    project_dict['organization_name'] = row[3]
-    status = row[4]
+    project_dict['project_id'] = s(row[0])
+    project_dict['student_name'] = s(row[1])
+    project_dict['project_name'] = s(row[2])
+    project_dict['organization_name'] = s(row[3])
+    status = s(row[4])
     assert(status == "accepted")
-    project_dict['mentor_name'] = row[5]
+    project_dict['mentor_name'] = s(row[5])
     add_to_dict(by_student, project_dict['student_name'], project_dict)
     add_to_dict(by_mentor, project_dict['mentor_name'], project_dict)
     add_to_dict(by_project, project_dict['project_name'], project_dict)
@@ -45,6 +47,30 @@ for year in range(2009,2014):
                 skipped = True
             else:
                 parse_row(row, year)
+
+for year in range(2005, 2009):
+    t = html.parse("%d.html" % year)
+    for organization_h2 in t.xpath("//section/h2"):
+        organization_name = organization_h2.text_content()
+        for project_h2 in organization_h2.xpath("../ul/li"):
+            project_name = project_h2[0].text_content()
+            project_tail = project_h2[0].tail.lstrip().rstrip()[3:]
+            student_name, mentor_name = project_tail.split(', mentored by ')
+
+            project_dict = {}
+            project_dict['year'] = year
+            #project_dict['project_id'] = row[0]
+            project_dict['student_name'] = s(student_name.strip())
+            project_dict['project_name'] = s(project_name)
+            project_dict['organization_name'] = s(organization_name)
+            #status = row[4]
+            #assert(status == "accepted")
+            project_dict['mentor_name'] = s(mentor_name.strip())
+            add_to_dict(by_student, project_dict['student_name'], project_dict)
+            add_to_dict(by_mentor, project_dict['mentor_name'], project_dict)
+            add_to_dict(by_project, project_dict['project_name'], project_dict)
+            add_to_dict(by_organization, project_dict['organization_name'], project_dict)
+            add_to_dict(by_year, year, project_dict)
 
 transaction.set_autocommit(False)
 
