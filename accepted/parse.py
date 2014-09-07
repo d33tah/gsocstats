@@ -2,6 +2,11 @@
 
 import csv
 
+import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "frontend.settings")
+from frontend.models import Person, Organization, Project
+from django.db import transaction
+
 by_student = {}
 by_project = {}
 by_mentor = {}
@@ -40,3 +45,31 @@ for year in range(2009,2014):
                 skipped = True
             else:
                 parse_row(row, year)
+
+transaction.set_autocommit(False)
+
+people = {x for x in by_mentor}.union({x for x in by_student})
+people_objs = {}
+for person in people:
+    o = Person(name=person)
+    o.save()
+    people_objs[person] = o
+
+organization_objs = {}
+for organization in by_organization:
+    o = Organization(name=organization)
+    o.save()
+    organization_objs[organization] = o
+
+for project_list in by_project.values():
+    project = project_list[0]
+    student = people_objs[project['student_name']]
+    mentor = people_objs[project['mentor_name']]
+    year = int(project['year'])
+    name = project['project_name']
+    organization = organization_objs[project['organization_name']]
+    o = Project(student=student, mentor=mentor, year=year, name=name,
+                organization=organization)
+    o.save()
+
+transaction.set_autocommit(True)
