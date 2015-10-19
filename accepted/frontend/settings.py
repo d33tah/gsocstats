@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = (
     'readonly', # pip install django-db-readonly
+    'django_admin_bootstrapped',
     'frontend',
     'django.contrib.admin',
     'django.contrib.auth',
