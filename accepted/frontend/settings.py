@@ -85,4 +85,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'frontend', 'templates'),
+)
+
 SITE_READ_ONLY = True
