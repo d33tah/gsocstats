@@ -3,11 +3,12 @@ from frontend.models import Person, Organization, Project
 
 class PersonAdmin(admin.ModelAdmin):
     list_display = ('name', )
+    search_fields = ['name']
 admin.site.register(Person, PersonAdmin)
 
 class OrganizationAdmin(admin.ModelAdmin):
     list_display = ('name', )
-    list
+    search_fields = ['name']
 admin.site.register(Organization, OrganizationAdmin)
 
 class ProjectAdmin(admin.ModelAdmin):
