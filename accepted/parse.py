@@ -39,7 +39,7 @@ def parse_row(row, year):
     add_to_dict(by_organization, project_dict['organization_name'], project_dict)
     add_to_dict(by_year, year, project_dict)
 
-for year in range(2009,2015):
+for year in range(2009,2016):
     with open("%s.csv" % year) as csvfile:
         r = csv.reader(csvfile)
         skipped = False
